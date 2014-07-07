@@ -8,13 +8,14 @@ nev2hdf5 [INPUT_FILE] [OUTPUT_FILE]
 
 If OUTPUT_FILE does not extension .h5, it will be appended automatically
 
-The output structure is as follows:  
-file---attrs---timeOrigin  
-     |      |-resoltuion  
-     |      |-comment  
-     |      |-mapfile  
-     |      |-arrayName  
-     |-events---dset---attrs---eventID  
-     |        |      |-timestamps  
-     |        |-dset...  
-     |-channels  
+The output structure is as follows:
+
+    file---attrs---timeOrigin
+         |      |-resoltuion
+         |      |-comment
+         |      |-mapfile
+         |      |-arrayName
+         |-events---dset---attrs---eventID
+         |        |      |-timestamps
+         |        |-dset...
+         |-channels
