@@ -5,54 +5,33 @@ meta:
   encoding: ASCII
   endian: le
   license: CC0-1.0
+  imports:
+    - filespec
+    - timespec
+    - filter
+
 doc-ref: Trellis NEV Spec, Document Version R01838_07
+
 seq:
-  - id: nev_file_header
-    type: nev_file_header
-  - id: nev_extended_header
-    type: nev_extended_header
+  - id: file_header
+    type: file_header
+  - id: extended_header
+    type: extended_header
     repeat: expr
-    repeat-expr: nev_file_header.number_of_extended_headers
-  - id: nev_data_packet
-    type: nev_data_packet
-    size: nev_file_header.bytes_in_data_packets
+    repeat-expr: file_header.number_of_extended_headers
+  - id: data_packet
+    type: data_packet
+    size: file_header.bytes_in_data_packets
     repeat: eos
 
 types:
 
-  file_spec:
-    seq:
-      - id: major
-        type: u1
-      - id: minor
-        type: u1
-
-  time_spec:
-    doc-ref: Windows SYSTEM TIME structure
-    seq:
-      - id: year
-        type: u2
-      - id: month
-        type: u2
-      - id: day_of_week
-        type: u2
-      - id: day
-        type: u2
-      - id: hour
-        type: u2
-      - id: minute
-        type: u2
-      - id: second
-        type: u2
-      - id: millisecond
-        type: u2
-
-  nev_file_header:
+  file_header:
     seq:
       - id: file_type_id
         contents: NEURALEV
       - id: file_spec
-        type: file_spec
+        type: filespec
       - id: additional_flags
         type: u2
       - id: bytes_in_headers
@@ -64,7 +43,7 @@ types:
       - id: time_resolution_of_samples
         type: u4
       - id: time_origin
-        type: time_spec
+        type: timespec
       - id: application_to_create_file
         type: strz
         size: 32
@@ -78,7 +57,7 @@ types:
       - id: number_of_extended_headers
         type: u4
 
-  nev_extended_header:
+  extended_header:
     seq:
       - id: packet_id
         type: str
@@ -119,25 +98,10 @@ types:
         seq:
           - id: electrode_id
             type: u2
-          - id: high_pass_corner_frequency
-            type: u4
-          - id: high_pass_filter_order
-            type: u4
-          - id: high_pass_filter_type
-            type: u2
-            enum: filter_type
-          - id: low_pass_corner_frequency
-            type: u4
-          - id: low_pass_filter_order
-            type: u4
-          - id: low_pass_filter_type
-            type: u2
-            enum: filter_type
-        enums:
-          filter_type:
-            0: none
-            1: butterworth
-            2: chebyshev
+          - id: high_pass_filter
+            type: filter
+          - id: low_pass_filter
+            type: filter
       neuevlbl_body:
         seq:
           - id: electrode_id
@@ -158,7 +122,7 @@ types:
             0: serial
             1: parallel
 
-  nev_data_packet:
+  data_packet:
     seq:
       - id: timestamp
         type: u4
@@ -174,9 +138,12 @@ types:
     instances:
       packet_type:
         value: >
-          packet_id < 0 ? event::digital :
+          packet_id < 1 ? event::digital :
           packet_id >= 1 and packet_id <= 512 ? event::spike :
           event::stim
+      electrode_id:
+        value: >
+          packet_id > 5121 ? packet_id - 5120 : packet_id
     enums:
       event:
         0: digital
@@ -206,10 +173,10 @@ types:
           - id: reserved
             type: u1
           - id: waveform
-            size: _root.nev_file_header.bytes_in_data_packets - 8
+            size: _root.file_header.bytes_in_data_packets - 8
       stim:
         seq:
           - id: reserved
             type: u2
           - id: waveform
-            size: _root.nev_file_header.bytes_in_data_packets - 8
+            size: _root.file_header.bytes_in_data_packets - 8
