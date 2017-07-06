@@ -36,12 +36,12 @@ types:
       - id: label
         type: strz
         size: 16
-      - id: comments
-        type: strz
-        size: 200
       - id: application_to_create_file # zero terminated?
         type: strz
         size: 52
+      - id: comments
+        type: strz
+        size: 200
       - id: processor_timestamp
         type: u4
       - id: period

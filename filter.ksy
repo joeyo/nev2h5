@@ -10,9 +10,11 @@ doc-ref: Trellis NEV Spec, Document Version R01838_07
 seq:
 - id: corner_frequency
   type: u4
-- id: filter_order
+- id: order
+  doc: Filter corner frequency in mHz (1000ths of a Hertz)
   type: u4
-- id: filter_type
+  doc: Filter order. 0 = NONE
+- id: type
   type: u2
   enum: filter_type
 enums:
