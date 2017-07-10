@@ -257,8 +257,8 @@ types:
     types:
       digital:
         seq:
-          - id: packet_insertion_reason
-            type: u1
+          - id: packet
+            type: packet_insertion_reason
           - id: reserved
             type: u1
           - id: parallel_input
@@ -271,6 +271,27 @@ types:
             type: s2
           - id: sma_input_4
             type: s2
+        types:
+          packet_insertion_reason:
+            # note that kaitai reads the most-significant bits first
+            # so this is ordered"backwards"
+            seq:
+              - id: serial
+                type: b1
+              - id: periodic
+                type: b1
+              - id: unused
+                type: b1
+              - id: sma4
+                type: b1
+              - id: sma3
+                type: b1
+              - id: sma2
+                type: b1
+              - id: sma1
+                type: b1
+              - id: strobe
+                type: b1
       spike:
         seq:
           - id: unit_classification_number
